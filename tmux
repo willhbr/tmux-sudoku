@@ -1,3 +1,7 @@
 #!/bin/bash
 
-exec tmux -L test-sock "$@"
+set -e
+
+ruby generate.rb sudoku.conf sudoku-compiled.conf
+
+exec tmux -L test-sock -f sudoku-compiled.conf
