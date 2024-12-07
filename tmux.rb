@@ -1,3 +1,4 @@
+#!/usr/bin/ruby
 require 'erb'
 
 def xy(x, y)
@@ -12,6 +13,16 @@ end
 
 def sum(exprs)
   exprs.reduce { |acc, ex| "\#{e|+:#{acc},#{ex}}" }
+end
+
+def everything_ok
+  buff = []
+  (1..9).each do |i|
+    buff << is_ok(all_x(i))
+    buff << is_ok(all_y(i))
+    buff << is_ok(cell(i))
+  end
+  buff.reduce { |acc, ex| "\#{&&:#{acc},#{ex}}" }
 end
 
 def is_ok(exprs)
@@ -29,11 +40,15 @@ def all_y(x)
 end
 
 def all_cell(x, y)
-  [0, 1, 2].each do |ax|
-    [0, 1, 2].each do |ay|
+  [0, 1, 2].map do |ax|
+    [0, 1, 2].map do |ay|
       xy x + ax, y + ay
     end
   end.flatten
+end
+
+def cell(i)
+  all_cell ((i - 1) % 3) * 3 + 1, ((i - 1) / 3) * 3 + 1
 end
 
 sud = File.read 'sudoku'
@@ -50,5 +65,8 @@ end
 
 File.write 'sudoku-data.conf', res
 
-compiled = ERB.new(File.read(ARGV[0])).result(binding)
-File.write(ARGV[1], compiled)
+output = 'sudoku-compiled.conf'
+compiled = ERB.new(File.read('sudoku.conf')).result(binding)
+File.write(output, compiled)
+
+exec *(%w(tmux -L test-sock -f) + [output])
