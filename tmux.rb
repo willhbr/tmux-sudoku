@@ -25,6 +25,24 @@ def everything_ok
   buff.reduce { |acc, ex| "\#{&&:#{acc},#{ex}}" }
 end
 
+def show_state
+  (1..9).map do |y|
+    line = (1..9).map do |x|
+      if '36'.include? x.to_s
+        a = xy x, y
+        a + '│'
+      else
+        xy x, y
+      end
+    end.join
+    if '36'.include? y.to_s
+      line + '\n───┼───┼───'
+    else
+      line
+    end
+  end.join('\n')
+end
+
 def is_ok(exprs)
   "\#{e|==:45,#{sum exprs}}"
 end
@@ -58,7 +76,7 @@ sud.lines.each_with_index do |row, y|
   row.split('').each_with_index do |num, x|
     if num != "\n" && num != '|'
       num = '0' if num == ' '
-      res += "set -s @x#{x + 1}y#{y + 1} '#{num}'\n"
+      res += "set @x#{x + 1}y#{y + 1} '#{num}'\n"
     end
   end
 end
