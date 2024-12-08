@@ -1,6 +1,18 @@
 #!/usr/bin/ruby
 require 'erb'
 
+def every_xy
+  (1..9).map do |y|
+    (1..9).map do |x|
+      yield xy_unformatted(x ,y)
+    end
+  end.flatten
+end
+
+def xy_unformatted(x, y)
+  "@x#{x}y#{y}"
+end
+
 def xy(x, y)
   "\#{@x#{x}y#{y}}"
 end
@@ -67,6 +79,12 @@ end
 
 def cell(i)
   all_cell ((i - 1) % 3) * 3 + 1, ((i - 1) / 3) * 3 + 1
+end
+
+def copy_options(new_session)
+  every_xy do |cell|
+    "tmux set -t #{new_session} #{cell} \"\#{#{cell}}\""
+  end.join(';')
 end
 
 sud = File.read ARGV[0]
