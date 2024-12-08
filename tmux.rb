@@ -69,7 +69,7 @@ def cell(i)
   all_cell ((i - 1) % 3) * 3 + 1, ((i - 1) / 3) * 3 + 1
 end
 
-sud = File.read 'sudoku'
+sud = File.read ARGV[0]
 
 res = ''
 sud.lines.each_with_index do |row, y|
@@ -87,4 +87,4 @@ output = 'sudoku-compiled.conf'
 compiled = ERB.new(File.read('sudoku.conf')).result(binding)
 File.write(output, compiled)
 
-exec *(%w(tmux -L test-sock -f) + [output])
+exec *(%w(tmux -L test-sock -f) + [output] + %w(attach))
