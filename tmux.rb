@@ -87,17 +87,31 @@ def copy_options(new_session)
   end.join(';')
 end
 
+def subs(var, idx)
+  var_len = "\#{n:#{var}}"
+  start_idx = "\#{e|*:2,#{idx}}"
+  end_idx = "\#{e|-:#{var_len},#{start_idx}}"
+  front_truncated = "\#{=-#{end_idx}:@blanks}"
+  "\#{=2:#{front_truncated}}"
+end
+
 sud = File.read ARGV[0]
 
 res = ''
+blanks = []
 sud.lines.each_with_index do |row, y|
   row.split('').each_with_index do |num, x|
     if num != "\n" && num != '|'
-      num = '0' if num == ' '
+      if num == ' '
+        num = '0'
+        blanks << "#{x + 1}#{y + 1}"
+      end
       res += "set @x#{x + 1}y#{y + 1} '#{num}'\n"
     end
   end
 end
+
+res += "set @blanks '#{blanks.join}'\n"
 
 File.write 'sudoku-data.conf', res
 
