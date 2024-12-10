@@ -95,6 +95,22 @@ def subs(var, idx)
   "\#{=2:#{front_truncated}}"
 end
 
+def x_sub(var, idx)
+  var_len = "\#{n:#{var}}"
+  start_idx = "\#{e|*:2,#{idx}}"
+  end_idx = "\#{e|-:#{var_len},#{start_idx}}"
+  front_truncated = "\#{=-#{end_idx}:@blanks}"
+  "\#{=1:#{front_truncated}}"
+end
+
+def y_sub(var, idx)
+  var_len = "\#{n:#{var}}"
+  start_idx = "\#{e|*:2,#{idx}}"
+  end_idx = "\#{e|-:\#{e|-:#{var_len},#{start_idx}},1}"
+  front_truncated = "\#{=-#{end_idx}:@blanks}"
+  "\#{=1:#{front_truncated}}"
+end
+
 sud = File.read ARGV[0]
 
 res = ''
