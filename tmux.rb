@@ -34,7 +34,14 @@ def everything_ok
     buff << is_ok(all_y(i))
     buff << is_ok(cell(i))
   end
-  buff.reduce { |acc, ex| "\#{&&:#{acc},#{ex}}" }
+  "\#{?\#{m:*0*,#{buff.join}},0,1}"
+end
+
+def is_ok(exprs)
+  all_exprs = exprs.join
+  (1..9).map do |i|
+    "\#{m:*#{i}*,#{all_exprs}}"
+  end.join
 end
 
 def show_state
@@ -53,10 +60,6 @@ def show_state
       line
     end
   end.join('\n')
-end
-
-def is_ok(exprs)
-  "\#{e|==:45,#{sum exprs}}"
 end
 
 def show(exprs)
