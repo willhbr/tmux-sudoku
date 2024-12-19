@@ -122,15 +122,14 @@ sud.lines.each_with_index do |row, y|
   row.split('').each_with_index do |num, x|
     if num != "\n" && num != '|'
       if num == ' '
-        num = '0'
         blanks << "#{x + 1}#{y + 1}"
       end
-      res += "set @x#{x + 1}y#{y + 1} '#{num}'\n"
+      res += "set -g @x#{x + 1}y#{y + 1} '#{num}'\n"
     end
   end
 end
 
-res += "set @blanks '#{blanks.join}'\n"
+res += "set -g @blanks '#{blanks.join}'\n"
 
 File.write 'sudoku-data.conf', res
 
@@ -138,4 +137,4 @@ output = 'sudoku-compiled.conf'
 compiled = ERB.new(File.read('sudoku.conf')).result(binding)
 File.write(output, compiled)
 
-exec *(%w(tmux -L test-sock -f) + [output] + %w(attach))
+exec *(%w(tmux -L test-sock -f) + [output] + %w(new-session))
