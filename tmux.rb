@@ -1,18 +1,6 @@
 #!/usr/bin/ruby
 require 'erb'
 
-def every_xy
-  (1..9).map do |y|
-    (1..9).map do |x|
-      yield xy_unformatted(x ,y)
-    end
-  end.flatten
-end
-
-def xy_unformatted(x, y)
-  "@x#{x}y#{y}"
-end
-
 def xy(x, y)
   "\#{@x#{x}y#{y}}"
 end
@@ -23,11 +11,7 @@ def all_x(y)
   end
 end
 
-def sum(exprs)
-  exprs.reduce { |acc, ex| "\#{e|+:#{acc},#{ex}}" }
-end
-
-def everything_ok
+def grid_ok
   buff = []
   (1..9).each do |i|
     buff << is_ok(all_x(i))
@@ -62,10 +46,6 @@ def show_state
   end.join('\n')
 end
 
-def show(exprs)
-  exprs.reduce { |acc, ex| "#{acc},#{ex}" }
-end
-
 def all_y(x)
   (1..9).map do |y|
     xy x, y
@@ -84,20 +64,6 @@ def cell(i)
   all_cell ((i - 1) % 3) * 3 + 1, ((i - 1) / 3) * 3 + 1
 end
 
-def copy_options(new_session)
-  every_xy do |cell|
-    "tmux set -t #{new_session} #{cell} \"\#{#{cell}}\""
-  end.join(';')
-end
-
-def subs(var, idx)
-  var_len = "\#{n:#{var}}"
-  start_idx = "\#{e|*:2,#{idx}}"
-  end_idx = "\#{e|-:#{var_len},#{start_idx}}"
-  front_truncated = "\#{=-#{end_idx}:@blanks}"
-  "\#{=2:#{front_truncated}}"
-end
-
 def x_sub(var, idx)
   var_len = "\#{n:#{var}}"
   start_idx = "\#{e|*:2,#{idx}}"
@@ -114,16 +80,24 @@ def y_sub(var, idx)
   "\#{=1:#{front_truncated}}"
 end
 
+def more_array?(var, idx)
+  var_len = "\#{n:#{var}}"
+  i = "\#{e|*:2,#{idx}}"
+  "\#{e|<:#{i},#{var_len}}"
+end
+
 sud = File.read ARGV[0]
 
 res = ''
 blanks = []
-sud.lines.each_with_index do |row, y|
-  row.split('').each_with_index do |num, x|
-    if num != "\n" && num != '|'
-      if num == ' '
-        blanks << "#{x + 1}#{y + 1}"
-      end
+lines = sud.lines
+(0...9).each do |y|
+  row = lines[y].split('')
+  (0...9).each do |x|
+    num = row[x]
+    if num.nil? || num == ' ' || num == "\n"
+      blanks << "#{x + 1}#{y + 1}"
+    else
       res += "set -g @x#{x + 1}y#{y + 1} '#{num}'\n"
     end
   end
@@ -134,7 +108,9 @@ res += "set -g @blanks '#{blanks.join}'\n"
 File.write 'sudoku-data.conf', res
 
 output = 'sudoku-compiled.conf'
+automatic = false
+socket = 'test-sock'
 compiled = ERB.new(File.read('sudoku.conf')).result(binding)
 File.write(output, compiled)
 
-exec *(%w(tmux -L test-sock -f) + [output] + %w(new-session))
+exec *(%w(tmux -L) + [socket, '-f'] + [output] + %w(attach))
