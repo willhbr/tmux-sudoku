@@ -39,9 +39,9 @@ def show_state
       end
     end.join
     if '25'.include? y.to_s
-      line + '\n───┼───┼───'
+      '  ' + line + '\n  ───┼───┼───'
     else
-      line
+      '  ' + line
     end
   end.join('\n')
 end
@@ -108,7 +108,6 @@ res += "set -g @blanks '#{blanks.join}'\n"
 File.write 'sudoku-data.conf', res
 
 output = 'sudoku-compiled.conf'
-automatic = false
 socket = 'test-sock'
 compiled = ERB.new(File.read('sudoku.conf')).result(binding)
 File.write(output, compiled)
