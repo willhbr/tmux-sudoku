@@ -23,7 +23,7 @@ end
 
 def is_ok(exprs)
   all_exprs = exprs.join
-  (0...9).map do |i|
+  (1..9).map do |i|
     "\#{m:*#{i}*,#{all_exprs}}"
   end.join
 end
@@ -61,7 +61,7 @@ def all_cell(x, y)
 end
 
 def cell(i)
-  all_cell (i % 3) * 3 + 1, (i / 3) * 3 + 1
+  all_cell (i % 3) * 3, (i / 3) * 3
 end
 
 def x_sub(var, idx)
