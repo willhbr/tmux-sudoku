@@ -6,14 +6,14 @@ def xy(x, y)
 end
 
 def all_x(y)
-  (1..9).map do |x|
+  (0...9).map do |x|
     xy x, y
   end
 end
 
 def grid_ok
   buff = []
-  (1..9).each do |i|
+  (0...9).each do |i|
     buff << is_ok(all_x(i))
     buff << is_ok(all_y(i))
     buff << is_ok(cell(i))
@@ -23,22 +23,22 @@ end
 
 def is_ok(exprs)
   all_exprs = exprs.join
-  (1..9).map do |i|
+  (0...9).map do |i|
     "\#{m:*#{i}*,#{all_exprs}}"
   end.join
 end
 
 def show_state
-  (1..9).map do |y|
-    line = (1..9).map do |x|
-      if '36'.include? x.to_s
+  (0...9).map do |y|
+    line = (0...9).map do |x|
+      if '25'.include? x.to_s
         a = xy x, y
         a + '│'
       else
         xy x, y
       end
     end.join
-    if '36'.include? y.to_s
+    if '25'.include? y.to_s
       line + '\n───┼───┼───'
     else
       line
@@ -47,7 +47,7 @@ def show_state
 end
 
 def all_y(x)
-  (1..9).map do |y|
+  (0...9).map do |y|
     xy x, y
   end
 end
@@ -61,7 +61,7 @@ def all_cell(x, y)
 end
 
 def cell(i)
-  all_cell ((i - 1) % 3) * 3 + 1, ((i - 1) / 3) * 3 + 1
+  all_cell (i % 3) * 3 + 1, (i / 3) * 3 + 1
 end
 
 def x_sub(var, idx)
@@ -96,9 +96,9 @@ lines = sud.lines
   (0...9).each do |x|
     num = row[x]
     if num.nil? || num == ' ' || num == "\n"
-      blanks << "#{x + 1}#{y + 1}"
+      blanks << "#{x}#{y}"
     else
-      res += "set -g @x#{x + 1}y#{y + 1} '#{num}'\n"
+      res += "set -g @x#{x}y#{y} '#{num}'\n"
     end
   end
 end
