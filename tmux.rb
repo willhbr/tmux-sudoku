@@ -5,6 +5,10 @@ def xy(x, y)
   "\#{@x#{x}y#{y}}"
 end
 
+def full_row(i)
+  all_x(i).join(' ')
+end
+
 def all_x(y)
   (0...9).map do |x|
     xy x, y
@@ -97,6 +101,7 @@ lines = sud.lines
     num = row[x]
     if num.nil? || num == ' ' || num == "\n"
       blanks << "#{x}#{y}"
+      res += "set -g @x#{x}y#{y} '1'\n"
     else
       res += "set -g @x#{x}y#{y} '#{num}'\n"
     end
